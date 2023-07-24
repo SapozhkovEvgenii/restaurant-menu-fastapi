@@ -1,0 +1,1 @@
+from app.models import Menu, SubMenu, Dish  # noqa
