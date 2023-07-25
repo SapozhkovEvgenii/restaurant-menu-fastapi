@@ -1,3 +1,4 @@
+import uuid
 from pydantic import BaseModel
 
 
@@ -8,7 +9,7 @@ class MenuBase(BaseModel):
 
 class MenuCreate(MenuBase):
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "title": "My menu 1",
                 "description": "My menu description 1",
@@ -18,7 +19,7 @@ class MenuCreate(MenuBase):
 
 class MenuUpdate(MenuBase):
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "title": "My updated menu 1",
                 "description": "My updated menu description 1",
@@ -27,9 +28,9 @@ class MenuUpdate(MenuBase):
 
 
 class MenuOut(MenuBase):
-    id: str
+    id: uuid.UUID
     submenus_count: int
     dishes_count: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

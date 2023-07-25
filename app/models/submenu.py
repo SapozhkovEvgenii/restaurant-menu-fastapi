@@ -9,13 +9,13 @@ from app.models.dish import Dish
 
 
 class SubMenu(Base):
-    __tablename__ = 'submenus'
+    __tablename__ = 'submenu'
 
     id = Column(UUID(as_uuid=True), primary_key=True,
                 default=uuid.uuid4, index=True)
     title = Column(String(100), unique=True, nullable=False, index=True)
     description = Column(Text)
-    parent_id = Column(String, ForeignKey("menu.id"))
+    parent_id = Column(UUID(as_uuid=True), ForeignKey("menu.id"))
     dishes = relationship("Dish", cascade="delete",
                           backref="submenu", lazy="selectin")
     dishes_count = column_property(

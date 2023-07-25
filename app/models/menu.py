@@ -10,7 +10,7 @@ from app.models.submenu import SubMenu
 
 
 class Menu(Base):
-    __tablename__ = 'menus'
+    __tablename__ = 'menu'
 
     id = Column(UUID(as_uuid=True), primary_key=True,
                 default=uuid.uuid4, index=True)

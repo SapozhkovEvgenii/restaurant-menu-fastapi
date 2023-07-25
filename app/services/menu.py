@@ -1,10 +1,14 @@
+import uuid
+
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 
+from app.schemas.status import StatusMessage
+
 from .base import BaseService
-from api.validators import menu_validator
-from models.menu import Menu
-from schemas.menu import MenuCreate, MenuUpdate
+from app.api.validators import menu_validator
+from app.models.menu import Menu
+from app.schemas.menu import MenuCreate, MenuUpdate
 
 
 class MenuService(BaseService):
@@ -20,7 +24,7 @@ class MenuService(BaseService):
         await self.session.refresh(menu)
         return menu
 
-    async def get_menu(self, menu_id: str):
+    async def get_menu(self, menu_id: uuid.UUID):
         await menu_validator.check_exists(menu_id, self.session)
         menu_obj = await self.session.execute(
             select(Menu).where(
@@ -31,9 +35,9 @@ class MenuService(BaseService):
 
     async def get_menu_list(self):
         menu_objs = await self.session.execute(select(Menu))
-        return menu_objs.scalars()
+        return menu_objs.scalars().all()
 
-    async def update_menu(self, menu_id: str, menu_in: MenuUpdate):
+    async def update_menu(self, menu_id: uuid.UUID, menu_in: MenuUpdate):
         menu_obj = await menu_validator.check_exists(menu_id, self.session)
         obj_data = jsonable_encoder(menu_obj)
         update_data = menu_in.model_dump(exclude_unset=True)
@@ -46,8 +50,11 @@ class MenuService(BaseService):
         await self.session.refresh(menu_obj)
         return menu_obj
 
-    async def delete_menu(self, menu_id: str):
+    async def delete_menu(self, menu_id: uuid.UUID):
         menu_obj = await menu_validator.check_exists(menu_id, self.session)
         await self.session.delete(menu_obj)
         await self.session.commit()
-        return menu_obj
+        return StatusMessage(
+            status=True,
+            message="The menu has been deleted",
+        )

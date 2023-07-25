@@ -1,3 +1,4 @@
+import uuid
 from pydantic import BaseModel, validator
 
 
@@ -15,10 +16,10 @@ class DishBase(BaseModel):
 
 
 class DishCreate(DishBase):
-    submenu_id = str
+    submenu_id = uuid.UUID
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "title": "My dish 1",
                 "description": "My dish description 1",
@@ -29,7 +30,7 @@ class DishCreate(DishBase):
 
 class DishUpdate(DishCreate):
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "title": "My updated dish 1",
                 "description": "My updated dish description 1",
@@ -39,7 +40,7 @@ class DishUpdate(DishCreate):
 
 
 class DishOut(DishBase):
-    id: str
+    id: uuid.UUID
 
     class Config:
-        orm_mode = True
+        from_attributes = True

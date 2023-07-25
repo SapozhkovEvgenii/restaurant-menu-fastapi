@@ -1,3 +1,4 @@
+import uuid
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
@@ -31,7 +32,7 @@ async def create_new_menu(
     status_code=HTTPStatus.OK,
 )
 async def get_one_menu(
-    menu_id: str, service: MenuService = Depends(get_menu_service)
+    menu_id: uuid.UUID, service: MenuService = Depends(get_menu_service)
 ) -> MenuOut:
     return await service.get_menu(menu_id)
 
@@ -51,7 +52,7 @@ async def get_all_menus(service: MenuService = Depends(get_menu_service)) -> lis
     status_code=HTTPStatus.OK,
 )
 async def to_update_menu(
-    menu_id: str, obj_in: MenuUpdate, service: MenuService = Depends(get_menu_service)
+    menu_id: uuid.UUID, obj_in: MenuUpdate, service: MenuService = Depends(get_menu_service)
 ) -> MenuOut:
     return await service.update_menu(menu_id, obj_in)
 
@@ -62,6 +63,6 @@ async def to_update_menu(
     status_code=HTTPStatus.OK,
 )
 async def to_delete_menu(
-    menu_id: str, service: MenuService = Depends(get_menu_service)
+    menu_id: uuid.UUID, service: MenuService = Depends(get_menu_service)
 ) -> StatusMessage:
     return await service.delete_menu(menu_id)
