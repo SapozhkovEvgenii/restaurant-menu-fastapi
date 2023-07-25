@@ -45,7 +45,7 @@ class Validation:
         if obj_id is not None:
             raise HTTPException(
                 status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
-                detail=f"{model_name} с таким именем уже существует!",
+                detail=f"A {model_name} with this name already exists",
             )
         return obj_id
 
