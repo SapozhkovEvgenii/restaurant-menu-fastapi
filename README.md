@@ -2,7 +2,10 @@ Async REST API for a restaurant menu
 
 Запуск приложения:
  - клонируем репозиторий
- - переходим в папку с проектом
+ - переходим в папку с проектом:
+    ```
+    cd restaurant-menu-fastapi/
+    ```
  - создаем виртуальное окружение и активируем его:
     ```
     python -m venv .venv
@@ -11,6 +14,8 @@ Async REST API for a restaurant menu
     source .venv/bin/activate
     ```
  - устанавливаем зависимости:
+    ```
+    pip install --upgrade pip```
     ```
     pip install -r ./requirements.txt
     ```
