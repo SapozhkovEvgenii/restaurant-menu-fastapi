@@ -2,8 +2,8 @@ import uuid
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends
-from app.api.endpoints.depends import get_menu_service
 
+from app.api.endpoints.depends import get_menu_service
 from app.services.menu import MenuService
 from app.schemas.menu import MenuCreate, MenuOut, MenuUpdate
 from app.schemas.status import StatusMessage
@@ -31,7 +31,7 @@ async def create_new_menu(
     response_model=MenuOut,
     status_code=HTTPStatus.OK,
 )
-async def get_one_menu(
+async def get_menu(
     menu_id: uuid.UUID, service: MenuService = Depends(get_menu_service)
 ) -> MenuOut:
     return await service.get_menu(menu_id)
