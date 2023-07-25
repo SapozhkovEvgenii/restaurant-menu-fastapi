@@ -8,7 +8,7 @@ class SubMenuBase(BaseModel):
 
 
 class SubMenuCreate(SubMenuBase):
-    menu_id = uuid.UUID
+    # menu_id: uuid.UUID
 
     class Config:
         json_schema_extra = {
@@ -20,6 +20,7 @@ class SubMenuCreate(SubMenuBase):
 
 
 class SubMenuUpdate(SubMenuBase):
+
     class Config:
         json_schema_extra = {
             "example": {
