@@ -16,7 +16,7 @@ class DishBase(BaseModel):
 
 
 class DishCreate(DishBase):
-    submenu_id = uuid.UUID
+    # submenu_id = uuid.UUID
 
     class Config:
         json_schema_extra = {

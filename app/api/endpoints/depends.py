@@ -1,5 +1,6 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.services.dish import DishService
 
 from app.services.menu import MenuService
 from app.services.submenu import SubmenuService
@@ -12,3 +13,7 @@ async def get_menu_service(session: AsyncSession = Depends(get_async_session)):
 
 async def get_submenu_service(session: AsyncSession = Depends(get_async_session)):
     return SubmenuService(session=session)
+
+
+async def get_dish_service(session: AsyncSession = Depends(get_async_session)):
+    return DishService(session=session)
