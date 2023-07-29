@@ -1,5 +1,5 @@
 import uuid
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator, ConfigDict
 
 
 class DishBase(BaseModel):
@@ -7,7 +7,7 @@ class DishBase(BaseModel):
     description: str
     price: str
 
-    @validator("price")
+    @field_validator("price")
     def check_price(cls, value: str):
         if not float(value):
             raise ValueError("price must be a number")
@@ -16,31 +16,26 @@ class DishBase(BaseModel):
 
 
 class DishCreate(DishBase):
-    # submenu_id = uuid.UUID
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "title": "My dish 1",
-                "description": "My dish description 1",
-                "price": "12.50",
-            },
-        }
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "title": "My dish 1",
+            "description": "My dish description 1",
+            "price": "12.50",
+        },
+    })
 
 
 class DishUpdate(DishCreate):
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "title": "My updated dish 1",
-                "description": "My updated dish description 1",
-                "price": "14.50",
-            },
-        }
+    model_config = ConfigDict(json_schema_extra={
+        "example": {
+            "title": "My updated dish 1",
+            "description": "My updated dish description 1",
+            "price": "14.50",
+        },
+    })
 
 
 class DishOut(DishBase):
-    id: uuid.UUID
+    model_config = ConfigDict(from_attributes=True)
 
-    class Config:
-        from_attributes = True
+    id: uuid.UUID
