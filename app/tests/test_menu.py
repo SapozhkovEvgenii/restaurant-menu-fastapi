@@ -44,6 +44,26 @@ async def test_create_menu(
     assert str(menu_from_db["id"]) == resp_data['id']
 
 
+async def test_create_menu_invalid_title(
+        async_client: AsyncClient,
+        create_menu):
+
+    """Creating a menu instance with invalid title"""
+
+    menu_data = {
+        'title': 'My menu 1',
+        'description': 'My menu description 1',
+    }
+
+    response = await async_client.post(
+        '/api/v1/menus/',
+        data=json.dumps(menu_data),
+    )
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY
+    response_data = response.json()
+    assert response_data['detail'] == 'A menu with this name already exists'
+
+
 async def test_get_menu_list(async_client: AsyncClient, create_menu):
 
     """Getting menu list"""
@@ -62,11 +82,11 @@ async def test_get_menu_by_id(
 
     """Getting menu by id"""
 
-    id_response = await async_client.get(f"/api/v1/menus/{create_menu.id}")
+    id_response = await async_client.get(f'/api/v1/menus/{create_menu.id}')
     id_resp_data = id_response.json()
     assert id_response.status_code == HTTPStatus.OK
-    assert id_resp_data["submenus_count"] == 0
-    assert id_resp_data["dishes_count"] == 0
+    assert id_resp_data['submenus_count'] == 0
+    assert id_resp_data['dishes_count'] == 0
     menu_from_db = await get_object_from_database_by_uuid(Menu, id_resp_data['id'])
     assert len(menu_from_db) == 1
     menu_from_db = dict(menu_from_db[0])
@@ -80,10 +100,10 @@ async def test_get_menu_not_found(async_client: AsyncClient):
     """GET request to a non-existent menu"""
 
     menu_id = uuid.uuid4()
-    response = await async_client.get(f"/api/v1/menus/{menu_id}")
+    response = await async_client.get(f'/api/v1/menus/{menu_id}')
     assert response.status_code == HTTPStatus.NOT_FOUND
     resp_data = response.json()
-    assert resp_data["detail"] == "menu not found"
+    assert resp_data['detail'] == 'menu not found'
 
 
 async def test_update_menu(
@@ -94,20 +114,20 @@ async def test_update_menu(
     """Update menu"""
 
     updated_menu_data = {
-        "title": "My updated menu 1",
-        "description": "My updated menu description 1",
+        'title': 'My updated menu 1',
+        'description': 'My updated menu description 1',
     }
 
     patch_response = await async_client.patch(
-        f"/api/v1/menus/{create_menu.id}",
+        f'/api/v1/menus/{create_menu.id}',
         data=json.dumps(updated_menu_data),
     )
     patch_data = patch_response.json()
     assert patch_response.status_code == HTTPStatus.OK
-    assert patch_data["title"] == updated_menu_data["title"]
-    assert patch_data["description"] == updated_menu_data["description"]
-    assert patch_data["submenus_count"] == 0
-    assert patch_data["dishes_count"] == 0
+    assert patch_data['title'] == updated_menu_data['title']
+    assert patch_data['description'] == updated_menu_data['description']
+    assert patch_data['submenus_count'] == 0
+    assert patch_data['dishes_count'] == 0
     menu_from_db = await get_object_from_database_by_uuid(Menu, patch_data['id'])
     assert len(menu_from_db) == 1
     menu_from_db = dict(menu_from_db[0])
@@ -121,8 +141,8 @@ async def test_update_menu_not_found(async_client: AsyncClient):
     """PATCH request to a non-existent menu"""
 
     updated_menu_data = {
-        "title": "My updated menu 1",
-        "description": "My updated menu description 1",
+        'title': 'My updated menu 1',
+        'description': 'My updated menu description 1',
     }
 
     menu_id = uuid.uuid4()
@@ -132,7 +152,7 @@ async def test_update_menu_not_found(async_client: AsyncClient):
     )
     assert response.status_code == HTTPStatus.NOT_FOUND
     resp_data = response.json()
-    assert resp_data["detail"] == "menu not found"
+    assert resp_data['detail'] == 'menu not found'
 
 
 async def test_delete_menu(async_client: AsyncClient, create_menu):
@@ -142,15 +162,16 @@ async def test_delete_menu(async_client: AsyncClient, create_menu):
     delete_response = await async_client.delete(f"/api/v1/menus/{create_menu.id}")
     delete_data = delete_response.json()
     assert delete_response.status_code == HTTPStatus.OK
-    assert delete_data["status"] is True
-    assert delete_data["message"] == "The menu has been deleted"
+    assert delete_data['status'] is True
+    assert delete_data['message'] == 'The menu has been deleted'
 
 
 async def test_delete_menu_not_found(async_client: AsyncClient, create_menu):
 
     """Delete request to a non-existent menu"""
+
     menu_id = uuid.uuid4()
     delete_response = await async_client.get(f"/api/v1/menus/{menu_id}")
     assert delete_response.status_code == HTTPStatus.NOT_FOUND
     delete_data = delete_response.json()
-    assert delete_data["detail"] == "menu not found"
+    assert delete_data['detail'] == 'menu not found'
