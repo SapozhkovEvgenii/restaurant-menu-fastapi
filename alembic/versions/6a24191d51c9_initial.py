@@ -1,8 +1,8 @@
-"""r1 init create models
+"""Initial
 
-Revision ID: 1a4155631f5c
+Revision ID: 6a24191d51c9
 Revises: 
-Create Date: 2023-07-24 22:32:36.852599
+Create Date: 2023-07-31 16:03:06.701503
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '1a4155631f5c'
+revision = '6a24191d51c9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -30,7 +30,7 @@ def upgrade() -> None:
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('title', sa.String(length=100), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
-    sa.Column('parent_id', sa.String(), nullable=True),
+    sa.Column('parent_id', postgresql.UUID(as_uuid=True), nullable=True),
     sa.ForeignKeyConstraint(['parent_id'], ['menu.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -41,7 +41,7 @@ def upgrade() -> None:
     sa.Column('title', sa.String(length=100), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('price', sa.String(), nullable=False),
-    sa.Column('parent_id', sa.String(), nullable=True),
+    sa.Column('parent_id', postgresql.UUID(as_uuid=True), nullable=True),
     sa.ForeignKeyConstraint(['parent_id'], ['submenu.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
