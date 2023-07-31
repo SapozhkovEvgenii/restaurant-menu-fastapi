@@ -1,35 +1,13 @@
 Async REST API for a restaurant menu
 
-Запуск приложения:
- - клонируем репозиторий
- - переходим в папку с проектом:
+Application launch:
+ - clone the repository
+ - go to project folder
     ```
     cd restaurant-menu-fastapi/
     ```
- - создаем виртуальное окружение и активируем его:
+ - launch:
     ```
-    python -m venv .venv
+    docker-compose up -d
     ```
-    ```
-    source .venv/bin/activate
-    ```
- - устанавливаем зависимости:
-    ```
-    pip install --upgrade pip```
-    ```
-    pip install -r ./requirements.txt
-    ```
- - поднимаем базу данных:
-    ```
-    docker-compose -f docker-compose.yaml up -d
-    ```
- - запускаем миграции:
-    ```
-    alembic upgrade heads
-    ```
- - запускаем приложение:
-    ```
-    uvicorn app.main:app --reload
-    ```
-
-Документация доступна по адресу http://127.0.0.1:8000/docs
+Documentation is available at the link: http://127.0.0.1:8000/docs
