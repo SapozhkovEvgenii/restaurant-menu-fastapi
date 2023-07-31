@@ -1,14 +1,17 @@
 FROM python:3.10-slim
 
-WORKDIR /app
+WORKDIR /code/
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-COPY ./requirements.txt /app
+COPY ./requirements.txt /code/
 
-RUN pip install -r /app/requirements.txt --no-cache-dir
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r /code/requirements.txt
 
-COPY . /app/
+COPY . /code/
 
-CMD ["uvicorn", "app.main:app", "--reload"]
+EXPOSE 8000
+
+CMD ["alembic", "upgrade head", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--reload"]
