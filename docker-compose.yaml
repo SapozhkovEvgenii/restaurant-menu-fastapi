@@ -20,21 +20,22 @@ services:
       - 5432
     networks:
       - web_network
-  # web:
-  #   container_name: web_fastapi
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   env_file:
-  #     - .env
-  #   # entrypoint: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --reload"
-  #   networks:
-  #     - web_network
-  #   ports:
-  #    - "8000:8000"
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
+  web:
+    container_name: web_fastapi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    entrypoint: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    networks:
+      - web_network
+    ports:
+     - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
 networks:
   web_network:
     name: web_network
