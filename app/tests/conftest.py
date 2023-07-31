@@ -12,7 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from app.core.config import TEST_ASYNC_DATABASE_URL
 from app.core.db import Base, get_async_session
 from app.main import app
-from app.models import Menu, SubMenu
+from app.models import Menu, SubMenu, Dish
 
 
 async_engine = create_async_engine(TEST_ASYNC_DATABASE_URL, echo=True)
@@ -92,6 +92,28 @@ async def create_submenu(create_menu):
         session.add(submenu_obj)
         await session.commit()
     return submenu_obj
+
+
+@pytest_asyncio.fixture
+async def create_dish(create_submenu):
+    dish_data = {
+        "title": "My dish 1",
+        "description": "My dish description 1",
+        "price": "12.50",
+    }
+
+    async_engine = create_async_engine(TEST_ASYNC_DATABASE_URL, echo=True)
+
+    Session = sessionmaker(
+        async_engine,
+        expire_on_commit=False,
+        class_=AsyncSession,
+    )
+    async with Session() as session:
+        dish_obj = Dish(**dish_data, parent_id=create_submenu.id)
+        session.add(dish_obj)
+        await session.commit()
+    return dish_obj
 
 
 @pytest_asyncio.fixture
