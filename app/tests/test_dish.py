@@ -11,6 +11,21 @@ from sqlalchemy.orm import sessionmaker
 from app.models import Dish
 from app.models.menu import Menu
 
+async_engine = create_async_engine(TEST_ASYNC_DATABASE_URL, echo=True)
+
+Session = sessionmaker(
+    async_engine,
+    expire_on_commit=False,
+    class_=AsyncSession,
+)
+
+
+async def get_menu_id():
+    async with Session() as session:
+        menu = await session.execute(select(Menu))
+        menu_id = menu.scalars().first()
+    return menu_id
+
 
 async def test_get_empty_dish_list(
         async_client: AsyncClient,
@@ -68,17 +83,7 @@ async def test_create_dish_invalid_title(
         "price": "22.50",
     }
 
-    async_engine = create_async_engine(TEST_ASYNC_DATABASE_URL, echo=True)
-
-    Session = sessionmaker(
-        async_engine,
-        expire_on_commit=False,
-        class_=AsyncSession,
-    )
-
-    async with Session() as session:
-        menu = await session.execute(select(Menu))
-        menu_id = menu.scalars().first()
+    menu_id = await get_menu_id()
 
     response = await async_client.post(
         f'/api/v1/menus/{menu_id}/submenus/{create_dish.parent_id}/dishes/',
@@ -93,16 +98,7 @@ async def test_get_dish_list(async_client: AsyncClient, create_dish):
 
     """Getting dish list"""
 
-    async_engine = create_async_engine(TEST_ASYNC_DATABASE_URL, echo=True)
-
-    Session = sessionmaker(
-        async_engine,
-        expire_on_commit=False,
-        class_=AsyncSession,
-    )
-    async with Session() as session:
-        menu = await session.execute(select(Menu))
-        menu_id = menu.scalars().first()
+    menu_id = await get_menu_id()
 
     response = await async_client.get(
         f'/api/v1/menus/{menu_id}/submenus/{create_dish.parent_id}/dishes/')
@@ -117,19 +113,9 @@ async def test_get_dish_by_id(
         get_object_from_database_by_uuid,
         create_dish):
 
-    """Getting submenu by id"""
+    """Getting dish by id"""
 
-    async_engine = create_async_engine(TEST_ASYNC_DATABASE_URL, echo=True)
-
-    Session = sessionmaker(
-        async_engine,
-        expire_on_commit=False,
-        class_=AsyncSession,
-    )
-
-    async with Session() as session:
-        menu = await session.execute(select(Menu))
-        menu_id = menu.scalars().first()
+    menu_id = await get_menu_id()
 
     id_response = await async_client.get(
         f'/api/v1/menus/{menu_id}/submenus/{create_dish.parent_id}/dishes/{create_dish.id}'
@@ -147,3 +133,98 @@ async def test_get_dish_by_id(
     assert str(dish_from_db["id"]) == id_resp_data['id']
 
 
+async def test_get_dish_not_found(async_client: AsyncClient, create_submenu):
+
+    """GET request to a non-existent dish"""
+
+    menu_id = await get_menu_id()
+
+    dish_id = uuid.uuid4()
+    response = await async_client.get(
+        f'/api/v1/menus/{menu_id}/submenus/{create_submenu.id}/dishes/{dish_id}')
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    resp_data = response.json()
+    assert resp_data['detail'] == 'dish not found'
+
+
+async def test_update_dish(
+        async_client: AsyncClient,
+        get_object_from_database_by_uuid,
+        create_dish):
+
+    """Update dish"""
+
+    menu_id = await get_menu_id()
+
+    updated_dish_data = {
+        'title': 'My updated submenu 1',
+        'description': 'My updated submenu description 1',
+        'price': '19.20'
+    }
+
+    patch_response = await async_client.patch(
+        f'/api/v1/menus/{menu_id}/submenus/{create_dish.parent_id}/dishes/{create_dish.id}',
+        data=json.dumps(updated_dish_data),
+    )
+    patch_data = patch_response.json()
+    assert patch_response.status_code == HTTPStatus.OK
+    assert patch_data['title'] == updated_dish_data['title']
+    assert patch_data['description'] == updated_dish_data['description']
+    assert patch_data['price'] == updated_dish_data['price']
+    dish_from_db = await get_object_from_database_by_uuid(Dish, patch_data['id'])
+    assert len(dish_from_db) == 1
+    dish_from_db = dict(dish_from_db[0])
+    assert dish_from_db['title'] == patch_data['title']
+    assert dish_from_db['description'] == patch_data['description']
+    assert dish_from_db['price'] == patch_data['price']
+    assert str(dish_from_db["id"]) == patch_data['id']
+
+
+async def test_update_dish_not_found(async_client: AsyncClient, create_submenu):
+
+    """PATCH request to a non-existent dish"""
+
+    updated_submenu_data = {
+        'title': 'My updated menu 1',
+        'description': 'My updated menu description 1',
+        'price': '14.50'
+    }
+
+    menu_id = await get_menu_id()
+
+    dish_id = uuid.uuid4()
+    response = await async_client.patch(
+        f'/api/v1/menus/{menu_id}/submenus/{create_submenu.id}/dishes/{dish_id}',
+        data=json.dumps(updated_submenu_data),
+    )
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    resp_data = response.json()
+    assert resp_data['detail'] == 'dish not found'
+
+
+async def test_delete_dish(async_client: AsyncClient, create_dish):
+
+    """Delete dish"""
+
+    menu_id = await get_menu_id()
+
+    delete_response = await async_client.delete(
+        f'/api/v1/menus/{menu_id}/submenus/{create_dish.parent_id}/dishes/{create_dish.id}')
+    delete_data = delete_response.json()
+    assert delete_response.status_code == HTTPStatus.OK
+    assert delete_data['status'] is True
+    assert delete_data['message'] == 'The dish has been deleted'
+
+
+async def test_delete_dish_not_found(async_client: AsyncClient, create_dish):
+
+    """Delete non-existent dish"""
+
+    menu_id = await get_menu_id()
+
+    dish_id = uuid.uuid4()
+    delete_response = await async_client.delete(
+        f'/api/v1/menus/{menu_id}/submenus/{create_dish.parent_id}/dishes/{dish_id}')
+    delete_data = delete_response.json()
+    assert delete_response.status_code == HTTPStatus.NOT_FOUND
+    assert delete_data['detail'] == 'dish not found'

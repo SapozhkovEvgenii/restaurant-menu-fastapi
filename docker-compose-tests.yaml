@@ -4,13 +4,15 @@ services:
   test_db:
     container_name: test_db
     image: postgres:15.1-alpine
+    volumes:
+      - /var/lib/postgresql/data/
     restart: always
     environment:
       - POSTGRES_USER=postgres_test
       - POSTGRES_PASSWORD=postgres_test
       - POSTGRES_DB=postgres_test
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}" ]
+      test: [ "CMD-SHELL", "pg_isready -d ${TEST_POSTGRES_DB} -U ${TEST_POSTGRES_USER}" ]
       interval: 5s
       timeout: 20s
       retries: 100
@@ -20,24 +22,24 @@ services:
       - 5432
     networks:
       - test_network
-  # web:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   env_file:
-  #     - .env
-  #   entrypoint: >
-  #     sh -c "
-  #       uvicorn app.main:app --host 0.0.0.0 --reload
-  #     "
-  #   networks:
-  #     - test_network
-  #   ports:
-  #    - "8000:8000"
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
+  web:
+    container_name: web_fastapi_test
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/code/
+    env_file:
+      - .env
+    entrypoint: sh -c "pytest"
+    networks:
+      - test_network
+    ports:
+     - "8001:8000"
+    depends_on:
+      test_db:
+        condition: service_healthy
 
 networks:
   test_network:
-    driver: bridge
+    name: test_nerwork

@@ -4,6 +4,8 @@ services:
   db:
     container_name: db
     image: postgres:15.1-alpine
+    volumes:
+      - /var/lib/postgresql/data/
     restart: always
     environment:
       - POSTGRES_USER=postgres
@@ -25,6 +27,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - .:/code/
     env_file:
       - .env
     entrypoint: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
