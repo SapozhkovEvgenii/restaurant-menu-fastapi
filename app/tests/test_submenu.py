@@ -175,7 +175,7 @@ async def test_delete_submenu(async_client: AsyncClient, create_submenu):
 
 async def test_delete_submenu_not_found(async_client: AsyncClient, create_menu):
 
-    """Delete request to a non-existent menu"""
+    """Delete request to a non-existent submenu"""
 
     submenu_id = uuid.uuid4()
     delete_response = await async_client.get(
