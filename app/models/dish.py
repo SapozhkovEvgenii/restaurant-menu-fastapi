@@ -1,8 +1,7 @@
 import uuid
 
-from sqlalchemy import Column, ForeignKey, Text, String
+from sqlalchemy import Column, ForeignKey, String, Text
 from sqlalchemy.dialects.postgresql import UUID
-
 
 from app.core.db import Base
 
@@ -16,4 +15,4 @@ class Dish(Base):
     description = Column(Text)
 
     price = Column(String, nullable=False)
-    parent_id = Column(UUID(as_uuid=True), ForeignKey("submenu.id"))
+    parent_id = Column(UUID(as_uuid=True), ForeignKey('submenu.id'))

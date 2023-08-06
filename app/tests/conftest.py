@@ -1,6 +1,6 @@
 import asyncio
-from typing import Generator
 import uuid
+from typing import Generator
 
 import pytest
 import pytest_asyncio
@@ -12,8 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from app.core.config import TEST_ASYNC_DATABASE_URL
 from app.core.db import Base, get_async_session
 from app.main import app
-from app.models import Menu, SubMenu, Dish
-
+from app.models import Dish, Menu, SubMenu
 
 async_engine = create_async_engine(TEST_ASYNC_DATABASE_URL, echo=True)
 
@@ -97,9 +96,9 @@ async def create_submenu(create_menu):
 @pytest_asyncio.fixture
 async def create_dish(create_submenu):
     dish_data = {
-        "title": "My dish 1",
-        "description": "My dish description 1",
-        "price": "12.50",
+        'title': 'My dish 1',
+        'description': 'My dish description 1',
+        'price': '12.50',
     }
 
     async_engine = create_async_engine(TEST_ASYNC_DATABASE_URL, echo=True)

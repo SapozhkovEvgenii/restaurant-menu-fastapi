@@ -1,7 +1,8 @@
 import json
 import uuid
-from httpx import AsyncClient
 from http import HTTPStatus
+
+from httpx import AsyncClient
 
 from app.models import SubMenu
 
@@ -44,7 +45,7 @@ async def test_create_submenu(
     submenu_from_db = dict(submenu_from_db[0])
     assert submenu_from_db['title'] == resp_data['title']
     assert submenu_from_db['description'] == resp_data['description']
-    assert str(submenu_from_db["id"]) == resp_data['id']
+    assert str(submenu_from_db['id']) == resp_data['id']
 
 
 async def test_create_submenu_invalid_title(
@@ -90,7 +91,7 @@ async def test_get_submenu_by_id(
     )
     id_resp_data = id_response.json()
     assert id_response.status_code == HTTPStatus.OK
-    assert id_resp_data["dishes_count"] == 0
+    assert id_resp_data['dishes_count'] == 0
     submenu_from_db = await get_object_from_database_by_uuid(
         SubMenu,
         id_resp_data['id'])
@@ -98,7 +99,7 @@ async def test_get_submenu_by_id(
     submenu_from_db = dict(submenu_from_db[0])
     assert submenu_from_db['title'] == id_resp_data['title']
     assert submenu_from_db['description'] == id_resp_data['description']
-    assert str(submenu_from_db["id"]) == id_resp_data['id']
+    assert str(submenu_from_db['id']) == id_resp_data['id']
 
 
 async def test_get_submenu_not_found(async_client: AsyncClient, create_menu):
@@ -139,7 +140,7 @@ async def test_update_submenu(
     submenu_from_db = dict(submenu_from_db[0])
     assert submenu_from_db['title'] == patch_data['title']
     assert submenu_from_db['description'] == patch_data['description']
-    assert str(submenu_from_db["id"]) == patch_data['id']
+    assert str(submenu_from_db['id']) == patch_data['id']
 
 
 async def test_update_submenu_not_found(async_client: AsyncClient, create_menu):

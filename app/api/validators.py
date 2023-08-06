@@ -1,5 +1,5 @@
+import uuid
 from http import HTTPStatus
-from typing import Union
 
 from fastapi import HTTPException
 from sqlalchemy import select
@@ -14,9 +14,9 @@ class Validation:
 
     async def check_exists(
         self,
-        obj_id: str,
+        obj_id: uuid.UUID,
         session: AsyncSession,
-    ) -> Union[Menu, Dish, SubMenu] | HTTPException:
+    ) -> Menu | Dish | SubMenu | HTTPException:
         """
         Check if the object exists in the database.
         If the object doesn't exist, it raises an exception.
@@ -32,7 +32,7 @@ class Validation:
         if obj is None:
             raise HTTPException(
                 status_code=HTTPStatus.NOT_FOUND,
-                detail=f"{model_name} not found",
+                detail=f'{model_name} not found',
             )
         return obj
 
@@ -40,7 +40,7 @@ class Validation:
         self,
         obj_title: str,
         session: AsyncSession,
-    ) -> Union[Menu, Dish, SubMenu] | HTTPException:
+    ) -> Menu | Dish | SubMenu | HTTPException:
         """
         Check if the object with the same title exists in the database.
         If the object exists, it raises an exception.
@@ -56,7 +56,7 @@ class Validation:
         if obj_id is not None:
             raise HTTPException(
                 status_code=HTTPStatus.UNPROCESSABLE_ENTITY,
-                detail=f"A {model_name} with this name already exists",
+                detail=f'A {model_name} with this name already exists',
             )
         return obj_id
 

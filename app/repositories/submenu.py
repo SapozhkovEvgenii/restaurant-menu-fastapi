@@ -1,15 +1,15 @@
 import uuid
 
-from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException
-
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 
-from app.models.submenu import SubMenu
-from .base import BaseRepository
-from app.schemas.submenu import SubMenuCreate, SubMenuUpdate
 from app.api.validators import submenu_validator
+from app.models.submenu import SubMenu
 from app.schemas.status import StatusMessage
+from app.schemas.submenu import SubMenuCreate, SubMenuUpdate
+
+from .base import BaseRepository
 
 
 class SubmenuRepository(BaseRepository):
@@ -71,5 +71,5 @@ class SubmenuRepository(BaseRepository):
         await self.session.commit()
         return StatusMessage(
             status=True,
-            message="The submenu has been deleted",
+            message='The submenu has been deleted',
         )

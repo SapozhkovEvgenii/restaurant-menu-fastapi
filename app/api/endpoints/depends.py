@@ -1,10 +1,10 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.db import get_async_session
 from app.repositories.dish import DishRepository
 from app.repositories.menu import MenuRepository
 from app.repositories.submenu import SubmenuRepository
-from app.core.db import get_async_session
 
 
 async def get_menu_repository(

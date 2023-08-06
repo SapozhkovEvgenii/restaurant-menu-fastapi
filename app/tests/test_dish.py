@@ -1,13 +1,13 @@
 import json
 import uuid
-from httpx import AsyncClient
 from http import HTTPStatus
 
+from httpx import AsyncClient
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from app.core.config import TEST_ASYNC_DATABASE_URL
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
+from app.core.config import TEST_ASYNC_DATABASE_URL
 from app.models import Dish
 from app.models.menu import Menu
 
@@ -48,9 +48,9 @@ async def test_create_dish(
     """Creating a dish instance"""
 
     dish_data = {
-        "title": "My dish 1",
-        "description": "My dish description 1",
-        "price": "12.50",
+        'title': 'My dish 1',
+        'description': 'My dish description 1',
+        'price': '12.50',
     }
 
     response = await async_client.post(
@@ -68,7 +68,7 @@ async def test_create_dish(
     assert dish_from_db['title'] == resp_data['title']
     assert dish_from_db['description'] == resp_data['description']
     assert dish_from_db['price'] == resp_data['price']
-    assert str(dish_from_db["id"]) == resp_data['id']
+    assert str(dish_from_db['id']) == resp_data['id']
 
 
 async def test_create_dish_invalid_title(
@@ -78,9 +78,9 @@ async def test_create_dish_invalid_title(
     """Creating a dish instance with invalid title"""
 
     dish_data = {
-        "title": "My dish 1",
-        "description": "My dish description 2",
-        "price": "22.50",
+        'title': 'My dish 1',
+        'description': 'My dish description 2',
+        'price': '22.50',
     }
 
     menu_id = await get_menu_id()
@@ -130,7 +130,7 @@ async def test_get_dish_by_id(
     assert dish_from_db['title'] == id_resp_data['title']
     assert dish_from_db['description'] == id_resp_data['description']
     assert dish_from_db['price'] == id_resp_data['price']
-    assert str(dish_from_db["id"]) == id_resp_data['id']
+    assert str(dish_from_db['id']) == id_resp_data['id']
 
 
 async def test_get_dish_not_found(async_client: AsyncClient, create_submenu):
@@ -177,7 +177,7 @@ async def test_update_dish(
     assert dish_from_db['title'] == patch_data['title']
     assert dish_from_db['description'] == patch_data['description']
     assert dish_from_db['price'] == patch_data['price']
-    assert str(dish_from_db["id"]) == patch_data['id']
+    assert str(dish_from_db['id']) == patch_data['id']
 
 
 async def test_update_dish_not_found(async_client: AsyncClient, create_submenu):

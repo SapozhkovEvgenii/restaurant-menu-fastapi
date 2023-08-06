@@ -1,5 +1,6 @@
 import uuid
-from pydantic import BaseModel, field_validator, ConfigDict
+
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class DishBase(BaseModel):
@@ -7,30 +8,30 @@ class DishBase(BaseModel):
     description: str
     price: str
 
-    @field_validator("price")
+    @field_validator('price')
     def check_price(cls, value: str):
         if not float(value):
-            raise ValueError("price must be a number")
-        value = format(float(value), ".2f")
+            raise ValueError('price must be a number')
+        value = format(float(value), '.2f')
         return value
 
 
 class DishCreate(DishBase):
     model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "title": "My dish 1",
-            "description": "My dish description 1",
-            "price": "12.50",
+        'example': {
+            'title': 'My dish 1',
+            'description': 'My dish description 1',
+            'price': '12.50',
         },
     })
 
 
 class DishUpdate(DishCreate):
     model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "title": "My updated dish 1",
-            "description": "My updated dish description 1",
-            "price": "14.50",
+        'example': {
+            'title': 'My updated dish 1',
+            'description': 'My updated dish description 1',
+            'price': '14.50',
         },
     })
 
