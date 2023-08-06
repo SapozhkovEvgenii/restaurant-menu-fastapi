@@ -1,16 +1,15 @@
 import uuid
 
-from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException
-
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 
-from app.schemas.status import StatusMessage
-
-from .base import BaseRepository
 from app.api.validators import menu_validator
 from app.models.menu import Menu
 from app.schemas.menu import MenuCreate, MenuUpdate
+from app.schemas.status import StatusMessage
+
+from .base import BaseRepository
 
 
 class MenuRepository(BaseRepository):
@@ -60,5 +59,5 @@ class MenuRepository(BaseRepository):
         await self.session.commit()
         return StatusMessage(
             status=True,
-            message="The menu has been deleted",
+            message='The menu has been deleted',
         )

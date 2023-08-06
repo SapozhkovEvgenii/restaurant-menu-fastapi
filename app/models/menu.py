@@ -1,8 +1,8 @@
 import uuid
 
 from sqlalchemy import Column, String, Text, and_, func, select
-from sqlalchemy.orm import column_property, relationship
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import column_property, relationship
 
 from app.core.db import Base
 from app.models.dish import Dish
@@ -17,7 +17,7 @@ class Menu(Base):
     title = Column(String(100), unique=True, nullable=False, index=True)
     description = Column(Text)
     submenus = relationship(
-        "SubMenu", cascade="delete", backref="menu", lazy="selectin"
+        'SubMenu', cascade='delete', backref='menu', lazy='selectin'
     )
     submenus_count = column_property(
         select(func.count(SubMenu.id)).where(SubMenu.parent_id == id).scalar_subquery(),

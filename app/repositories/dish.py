@@ -1,15 +1,15 @@
 import uuid
 
-from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException
-
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 
-from .base import BaseRepository
+from app.api.validators import dish_validator
 from app.models.dish import Dish
 from app.schemas.dish import DishCreate, DishUpdate
-from app.api.validators import dish_validator
 from app.schemas.status import StatusMessage
+
+from .base import BaseRepository
 
 
 class DishRepository(BaseRepository):
@@ -68,5 +68,5 @@ class DishRepository(BaseRepository):
         await self.session.commit()
         return StatusMessage(
             status=True,
-            message="The dish has been deleted",
+            message='The dish has been deleted',
         )
