@@ -1,19 +1,34 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.services.dish import DishService
 
-from app.services.menu import MenuService
-from app.services.submenu import SubmenuService
+from app.repositories.dish import DishRepository
+from app.repositories.menu import MenuRepository
+from app.repositories.submenu import SubmenuRepository
 from app.core.db import get_async_session
 
 
-async def get_menu_service(session: AsyncSession = Depends(get_async_session)):
-    return MenuService(session=session)
+async def get_menu_repository(
+        session: AsyncSession = Depends(get_async_session)
+) -> MenuRepository:
+    """
+    Get a MenuRepository instance with a session.
+    """
+    return MenuRepository(session=session)
 
 
-async def get_submenu_service(session: AsyncSession = Depends(get_async_session)):
-    return SubmenuService(session=session)
+async def get_submenu_repository(
+        session: AsyncSession = Depends(get_async_session)
+) -> SubmenuRepository:
+    """
+    Get a SubmenuRepository instance with a session.
+    """
+    return SubmenuRepository(session=session)
 
 
-async def get_dish_service(session: AsyncSession = Depends(get_async_session)):
-    return DishService(session=session)
+async def get_dish_repository(
+        session: AsyncSession = Depends(get_async_session)
+) -> DishRepository:
+    """
+    Get a DishRepository instance with a session.
+    """
+    return DishRepository(session=session)

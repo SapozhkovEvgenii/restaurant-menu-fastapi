@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Union
 
 from fastapi import HTTPException
 from sqlalchemy import select
@@ -15,7 +16,12 @@ class Validation:
         self,
         obj_id: str,
         session: AsyncSession,
-    ):
+    ) -> Union[Menu, Dish, SubMenu] | HTTPException:
+        """
+        Check if the object exists in the database.
+        If the object doesn't exist, it raises an exception.
+        """
+
         model_name = self.model.__tablename__
         obj = await session.execute(
             select(self.model).where(
@@ -34,7 +40,12 @@ class Validation:
         self,
         obj_title: str,
         session: AsyncSession,
-    ):
+    ) -> Union[Menu, Dish, SubMenu] | HTTPException:
+        """
+        Check if the object with the same title exists in the database.
+        If the object exists, it raises an exception.
+        """
+
         model_name = self.model.__tablename__
         obj_id = await session.execute(
             select(self.model.id).where(

@@ -6,7 +6,8 @@ from fastapi import APIRouter, Depends
 from app.services.dish import DishService
 from app.schemas.status import StatusMessage
 from app.schemas.dish import DishCreate, DishUpdate, DishOut
-from app.api.endpoints.depends import get_dish_service
+from app.api.endpoints.depends import get_dish_repository
+from app.repositories.dish import DishRepository
 
 router = APIRouter(
     prefix="/menus/{menu_id}/submenus/{submenu_id}/dishes",
@@ -22,8 +23,9 @@ router = APIRouter(
 async def create_new_dish(
     submenu_id: uuid.UUID,
     dish_in: DishCreate,
-    service: DishService = Depends(get_dish_service)
+    service: DishService(DishRepository) = Depends(get_dish_repository)
 ) -> DishOut:
+    """Create a new dish instatance."""
 
     return await service.create_dish(submenu_id, dish_in)
 
@@ -35,8 +37,9 @@ async def create_new_dish(
 )
 async def get_dish(
     dish_id: uuid.UUID,
-    service: DishService = Depends(get_dish_service)
+    service: DishService(DishRepository) = Depends(get_dish_repository)
 ) -> DishOut:
+    """Get a dish instance by dish_id."""
     return await service.get_dish(dish_id)
 
 
@@ -47,8 +50,10 @@ async def get_dish(
 )
 async def get_all_dishes(
     submenu_id: uuid.UUID,
-    service: DishService = Depends(get_dish_service)
+    service: DishService(DishRepository) = Depends(get_dish_repository)
 ) -> list[DishOut]:
+    """Get a list of all instances of a dish."""
+
     return await service.get_dish_list(submenu_id)
 
 
@@ -57,11 +62,13 @@ async def get_all_dishes(
     response_model=DishOut,
     status_code=HTTPStatus.OK,
 )
-async def to_update_submenu(
+async def to_update_dish(
     dish_id: uuid.UUID,
     dish_in: DishUpdate,
-    service: DishService = Depends(get_dish_service)
+    service: DishService(DishRepository) = Depends(get_dish_repository)
 ) -> DishOut:
+    """Update a dish instance by dish_id."""
+
     return await service.update_dish(dish_id, dish_in)
 
 
@@ -70,8 +77,10 @@ async def to_update_submenu(
     response_model=StatusMessage,
     status_code=HTTPStatus.OK,
 )
-async def to_delete_menu(
+async def to_delete_dish(
     dish_id: uuid.UUID,
-    service: DishService = Depends(get_dish_service)
+    service: DishService(DishRepository) = Depends(get_dish_repository)
 ) -> StatusMessage:
+    """Delete a dish instance by dish_id."""
+
     return await service.delete_dish(dish_id)

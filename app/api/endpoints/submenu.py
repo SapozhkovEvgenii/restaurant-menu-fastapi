@@ -6,7 +6,8 @@ from fastapi import APIRouter, Depends
 from app.services.submenu import SubmenuService
 from app.schemas.status import StatusMessage
 from app.schemas.submenu import SubMenuCreate, SubMenuOut, SubMenuUpdate
-from app.api.endpoints.depends import get_submenu_service
+from app.api.endpoints.depends import get_submenu_repository
+from app.repositories.submenu import SubmenuRepository
 
 router = APIRouter(
     prefix="/menus/{menu_id}/submenus",
@@ -22,8 +23,10 @@ router = APIRouter(
 async def create_new_submenu(
     menu_id: uuid.UUID,
     submenu_in: SubMenuCreate,
-    service: SubmenuService = Depends(get_submenu_service)
+    service: SubmenuService(SubmenuRepository) = Depends(
+        get_submenu_repository)
 ) -> SubMenuOut:
+    """Create a submenu instance"""
 
     return await service.create_submenu(menu_id, submenu_in)
 
@@ -35,8 +38,11 @@ async def create_new_submenu(
 )
 async def get_submenu(
     submenu_id: uuid.UUID,
-    service: SubmenuService = Depends(get_submenu_service)
+    service: SubmenuService(SubmenuRepository) = Depends(
+        get_submenu_repository)
 ) -> SubMenuOut:
+    """Get a submenu instance by submenu_id"""
+
     return await service.get_submenu(submenu_id)
 
 
@@ -46,8 +52,11 @@ async def get_submenu(
     status_code=HTTPStatus.OK,
 )
 async def get_all_submenus(
-    service: SubmenuService = Depends(get_submenu_service)
+    service: SubmenuService(SubmenuRepository) = Depends(
+        get_submenu_repository)
 ) -> list[SubMenuOut]:
+    """Get a list of all instances of a submenumenu."""
+
     return await service.get_submenu_list()
 
 
@@ -59,8 +68,11 @@ async def get_all_submenus(
 async def to_update_submenu(
     submenu_id: uuid.UUID,
     submenu_in: SubMenuUpdate,
-    service: SubmenuService = Depends(get_submenu_service)
+    service: SubmenuService(SubmenuRepository) = Depends(
+        get_submenu_repository)
 ) -> SubMenuOut:
+    """Update a submenu instance by submenu_id"""
+
     return await service.update_submenu(submenu_id, submenu_in)
 
 
@@ -71,6 +83,9 @@ async def to_update_submenu(
 )
 async def to_delete_menu(
     submenu_id: uuid.UUID,
-    service: SubmenuService = Depends(get_submenu_service)
+    service: SubmenuService(SubmenuRepository) = Depends(
+        get_submenu_repository)
 ) -> StatusMessage:
+    """Delete a submenu instance by submenu_id"""
+
     return await service.delete_submenu(submenu_id)
