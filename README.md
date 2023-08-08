@@ -1,5 +1,9 @@
 Async REST API for a restaurant menu
 
+Еechnology stack:
+
+```FastAPI``` ```PostgreSQL``` ```Docker``` ```Pytest``` ```Redis```
+
 Application launch:
  - clone the repository
  - go to project folder
