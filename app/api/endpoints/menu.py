@@ -3,10 +3,9 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.endpoints.depends import get_menu_repository
-from app.repositories.menu import MenuRepository
 from app.schemas.menu import MenuCreate, MenuOut, MenuUpdate
 from app.schemas.status import StatusMessage
+from app.services.menu import MenuService, menu_service
 
 router = APIRouter(
     prefix='/menus',
@@ -21,7 +20,7 @@ router = APIRouter(
 )
 async def create_new_menu(
     menu: MenuCreate,
-    service: MenuRepository = Depends(get_menu_repository)
+    service: MenuService = Depends(menu_service)
 ) -> MenuOut | HTTPException:
     """Create a new menu instatance."""
 
@@ -35,7 +34,7 @@ async def create_new_menu(
 )
 async def get_menu(
     menu_id: uuid.UUID,
-    service: MenuRepository = Depends(get_menu_repository)
+    service: MenuService = Depends(menu_service)
 ) -> MenuOut | HTTPException:
     """Get a menu instance by dish_id."""
 
@@ -48,7 +47,7 @@ async def get_menu(
     status_code=HTTPStatus.OK,
 )
 async def get_all_menus(
-    service: MenuRepository = Depends(get_menu_repository)
+    service: MenuService = Depends(menu_service)
 ) -> list[MenuOut]:
     """Get a list of all instances of a menu."""
 
@@ -63,7 +62,7 @@ async def get_all_menus(
 async def to_update_menu(
     menu_id: uuid.UUID,
     obj_in: MenuUpdate,
-    service: MenuRepository = Depends(get_menu_repository)
+    service: MenuService = Depends(menu_service)
 ) -> MenuOut | HTTPException:
     """Update a menu instance by menu_id."""
 
@@ -77,7 +76,7 @@ async def to_update_menu(
 )
 async def to_delete_menu(
     menu_id: uuid.UUID,
-    service: MenuRepository = Depends(get_menu_repository)
+    service: MenuService = Depends(menu_service)
 ) -> StatusMessage | HTTPException:
     """Delete a menu instance by menu_id."""
 

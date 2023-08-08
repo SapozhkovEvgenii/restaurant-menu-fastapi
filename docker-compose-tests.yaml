@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   test_db:
     container_name: test_db
     image: postgres:15.1-alpine
@@ -8,9 +9,9 @@ services:
       - /var/lib/postgresql/data/
     restart: always
     environment:
-      - POSTGRES_USER=postgres_test
-      - POSTGRES_PASSWORD=postgres_test
-      - POSTGRES_DB=postgres_test
+      - POSTGRES_USER=${TEST_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${TEST_POSTGRES_PASSWORD}
+      - POSTGRES_DB=${TEST_POSTGRES_DB}
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -d ${TEST_POSTGRES_DB} -U ${TEST_POSTGRES_USER}" ]
       interval: 5s
@@ -22,6 +23,9 @@ services:
       - 5432
     networks:
       - test_network
+    depends_on:
+      redis:
+        condition: service_healthy
   web:
     container_name: web_fastapi_test
     build:
@@ -39,6 +43,22 @@ services:
     depends_on:
       test_db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+  redis:
+    container_name: "redis"
+    image: redis:latest
+    expose:
+      - 6379
+    ports:
+      - "6378:6379"
+    networks:
+      - test_network
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 20s
+      retries: 20
 
 networks:
   test_network:

@@ -3,10 +3,9 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.endpoints.depends import get_submenu_repository
-from app.repositories.submenu import SubmenuRepository
 from app.schemas.status import StatusMessage
 from app.schemas.submenu import SubMenuCreate, SubMenuOut, SubMenuUpdate
+from app.services.submenu import SubmenuService, submenu_service
 
 router = APIRouter(
     prefix='/menus/{menu_id}/submenus',
@@ -22,7 +21,7 @@ router = APIRouter(
 async def create_new_submenu(
     menu_id: uuid.UUID,
     submenu_in: SubMenuCreate,
-    service: SubmenuRepository = Depends(get_submenu_repository)
+    service: SubmenuService = Depends(submenu_service)
 ) -> SubMenuOut | HTTPException:
     """Create a submenu instance"""
 
@@ -36,7 +35,7 @@ async def create_new_submenu(
 )
 async def get_submenu(
     submenu_id: uuid.UUID,
-    service: SubmenuRepository = Depends(get_submenu_repository)
+    service: SubmenuService = Depends(submenu_service)
 ) -> SubMenuOut | HTTPException:
     """Get a submenu instance by submenu_id"""
 
@@ -49,11 +48,12 @@ async def get_submenu(
     status_code=HTTPStatus.OK,
 )
 async def get_all_submenus(
-    service: SubmenuRepository = Depends(get_submenu_repository)
+    menu_id: uuid.UUID,
+    service: SubmenuService = Depends(submenu_service)
 ) -> list[SubMenuOut]:
     """Get a list of all instances of a submenumenu."""
 
-    return await service.get_submenu_list()
+    return await service.get_submenu_list(menu_id)
 
 
 @router.patch(
@@ -64,7 +64,7 @@ async def get_all_submenus(
 async def to_update_submenu(
     submenu_id: uuid.UUID,
     submenu_in: SubMenuUpdate,
-    service: SubmenuRepository = Depends(get_submenu_repository)
+    service: SubmenuService = Depends(submenu_service)
 ) -> SubMenuOut | HTTPException:
     """Update a submenu instance by submenu_id"""
 
@@ -78,7 +78,7 @@ async def to_update_submenu(
 )
 async def to_delete_menu(
     submenu_id: uuid.UUID,
-    service: SubmenuRepository = Depends(get_submenu_repository)
+    service: SubmenuService = Depends(submenu_service)
 ) -> StatusMessage | HTTPException:
     """Delete a submenu instance by submenu_id"""
 

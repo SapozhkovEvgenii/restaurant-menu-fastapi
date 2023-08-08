@@ -3,10 +3,9 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.endpoints.depends import get_dish_repository
-from app.repositories.dish import DishRepository
 from app.schemas.dish import DishCreate, DishOut, DishUpdate
 from app.schemas.status import StatusMessage
+from app.services.dish import DishService, dish_service
 
 router = APIRouter(
     prefix='/menus/{menu_id}/submenus/{submenu_id}/dishes',
@@ -22,7 +21,7 @@ router = APIRouter(
 async def create_new_dish(
     submenu_id: uuid.UUID,
     dish_in: DishCreate,
-    service: DishRepository = Depends(get_dish_repository)
+    service: DishService = Depends(dish_service)
 ) -> DishOut | HTTPException:
     """Create a new dish instatance."""
 
@@ -36,7 +35,7 @@ async def create_new_dish(
 )
 async def get_dish(
     dish_id: uuid.UUID,
-    service: DishRepository = Depends(get_dish_repository)
+    service: DishService = Depends(dish_service)
 ) -> DishOut | HTTPException:
     """Get a dish instance by dish_id."""
     return await service.get_dish(dish_id)
@@ -49,7 +48,7 @@ async def get_dish(
 )
 async def get_all_dishes(
     submenu_id: uuid.UUID,
-    service: DishRepository = Depends(get_dish_repository)
+    service: DishService = Depends(dish_service)
 ) -> list[DishOut]:
     """Get a list of all instances of a dish."""
 
@@ -64,7 +63,7 @@ async def get_all_dishes(
 async def to_update_dish(
     dish_id: uuid.UUID,
     dish_in: DishUpdate,
-    service: DishRepository = Depends(get_dish_repository)
+    service: DishService = Depends(dish_service)
 ) -> DishOut | HTTPException:
     """Update a dish instance by dish_id."""
 
@@ -78,7 +77,7 @@ async def to_update_dish(
 )
 async def to_delete_dish(
     dish_id: uuid.UUID,
-    service: DishRepository = Depends(get_dish_repository)
+    service: DishService = Depends(dish_service)
 ) -> StatusMessage | HTTPException:
     """Delete a dish instance by dish_id."""
 
