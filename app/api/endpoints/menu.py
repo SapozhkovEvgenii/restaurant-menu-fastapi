@@ -36,7 +36,7 @@ async def get_menu(
     menu_id: uuid.UUID,
     service: MenuService = Depends(menu_service)
 ) -> MenuOut | HTTPException:
-    """Get a menu instance by dish_id."""
+    """Get a menu instance by menu_id."""
 
     return await service.get_menu(menu_id)
 
@@ -81,3 +81,17 @@ async def to_delete_menu(
     """Delete a menu instance by menu_id."""
 
     return await service.delete_menu(menu_id)
+
+
+@router.get(
+    '/{menu_id}/all-data',
+    response_model=None,
+    status_code=HTTPStatus.OK,
+)
+async def get_all_data_menu(
+    menu_id: uuid.UUID,
+    service: MenuService = Depends(menu_service)
+) -> list | HTTPException:
+    """Get all data of menu instance by menu_id."""
+
+    return await service.get_all_data_menu(menu_id)
