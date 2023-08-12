@@ -72,6 +72,13 @@ class MenuService:
             message='The menu has been deleted',
         )
 
+    async def get_all_data_menu(self, menu_id: uuid.UUID) -> list | HTTPException:
+        """Get one instance of menu by id with all data."""
+
+        await menu_validator.check_exists(menu_id, self.session)
+        menu_data = await menu_crud_repository.get_all_data(menu_id, self.session)
+        return menu_data
+
 
 async def menu_service(session: AsyncSession = Depends(get_async_session)):
     return MenuService(session=session)

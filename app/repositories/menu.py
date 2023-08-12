@@ -1,3 +1,4 @@
+import uuid
 from typing import Any
 
 from fastapi.encoders import jsonable_encoder
@@ -11,11 +12,13 @@ from app.repositories.base import BaseRepository
 
 class MenuRepository(BaseRepository):
 
-    async def get_all_data(self, session: AsyncSession) -> Any:
+    async def get_all_data(self, instance_id: uuid.UUID, session: AsyncSession) -> Any:
         """Receive all menu data with all submenus with their dishes."""
 
         result = await session.scalars(
-            select(self.model).options(
+            select(self.model
+                   ).where(self.model.id == instance_id,
+                           ).options(
                 joinedload(self.model.submenus).joinedload(SubMenu.dishes)
             )
         )
