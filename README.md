@@ -1,7 +1,8 @@
 Async REST API for a restaurant menu. Implemented 3 entities: Menu, Submenu, Dish.
+
 Dependencies:
 - A menu has submenus that are linked to it.
-- The submenu has dishes.
+- The submenu has dishes that are linked to it.
 
 Implemented caching. Redis is used as a cache storage.
 
